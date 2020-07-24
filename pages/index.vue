@@ -25,12 +25,13 @@
             <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
               <b-form-input
                 id="input-2"
-                v-model="form.name"
+                v-model="name"
+                name="name"
                 required
                 placeholder="Enter name"
               ></b-form-input>
             </b-form-group>
-
+            <div class="error" v-if="!$v.name.required">That is...not a name</div>
             <b-form-group id="input-group-3" label="Phone:" label-for="input-3">
               <b-form-input
                 id="input-3"
@@ -72,17 +73,27 @@
 
 
 <script>
+  import { validationMixin } from 'vuelidate'
+  import { required, minLength } from "vuelidate/lib/validators";
+
   export default {
+    mixins: [validationMixin],
     data() {
       return {
         form: {
           email: '',
-          name: '',
           phone: null,
           amount: null,
           file: null
         },
+        name: '',
         show: true
+      }
+    },
+    validations: {
+      name: {
+        required,
+        minLength: minLength(4)
       }
     },
     methods: {
