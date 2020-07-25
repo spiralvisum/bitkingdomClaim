@@ -56,9 +56,9 @@ export default {
       '@nuxtjs/firebase',
       {
         config: {
-          apiKey: 'AIzaSyAmw_1oTJWLFokCphphTM1NBa_iweARCqk',
-          databaseURL: 'https://bitkingdomclaim.firebaseio.com/',
-          projectId: 'bitkingdomclaim',
+          apiKey: '<apikey>',
+          databaseURL: '<databaseURL>',
+          projectId: '<projectID>',
           // storageBucket: '<storageBucket>',
         },
         services: {
