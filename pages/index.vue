@@ -11,36 +11,37 @@
               id="input-group-1"
               label="Email address:"
               label-for="input-1"
-              description="We'll never share your email with anyone else."
             >
               <b-form-input
                 id="input-1"
-                v-model="form.email"
+                v-model.lazy="$v.form.email.$model"
                 type="email"
                 required
                 placeholder="Enter email"
               ></b-form-input>
             </b-form-group>
+            <div class="error" v-if="!$v.form.email.email">That's not a valid email</div>
 
             <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
               <b-form-input
                 id="input-2"
-                v-model="name"
+                v-model.lazy="$v.form.name.$model"
                 name="name"
                 required
                 placeholder="Enter name"
               ></b-form-input>
             </b-form-group>
-            <div class="error" v-if="!$v.name.required">That is...not a name</div>
+            <div class="error" v-if="!$v.form.name.minLength">Your name must be at least 2 characters</div>
+
             <b-form-group id="input-group-3" label="Phone:" label-for="input-3">
               <b-form-input
                 id="input-3"
-                v-model="form.phone"
+                v-model.lazy="$v.form.phone.$model"
                 required
                 placeholder="Enter Phone Number"
               ></b-form-input>
             </b-form-group>
-
+            <div class="error" v-if="!$v.form.phone.phoneValid">Enter a valid phone number</div>
 
             <b-form-group id="input-group-4" label="Claim Amount:" label-for="input-4">
               <b-form-input
@@ -74,7 +75,7 @@
 
 <script>
   import { validationMixin } from 'vuelidate'
-  import { required, minLength } from "vuelidate/lib/validators";
+  import { required, minLength, email } from "vuelidate/lib/validators"
 
   export default {
     mixins: [validationMixin],
@@ -84,16 +85,28 @@
           email: '',
           phone: null,
           amount: null,
+          name: '',
           file: null
         },
-        name: '',
         show: true
       }
     },
     validations: {
-      name: {
-        required,
-        minLength: minLength(4)
+      form:{
+        email: {
+          required,
+          email
+        },
+        name: {
+          required,
+          minLength: minLength(4)
+        },
+        phone: {
+          required,
+          phoneValid:(phone) => { //a custom validator!
+      	    return /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(phone)
+          }
+        }
       }
     },
     methods: {
