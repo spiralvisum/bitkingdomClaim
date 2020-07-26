@@ -6,7 +6,7 @@
     <b-container>
       <b-row align-h="center">
         <b-col md="6" class="mt-5">
-          <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+          <b-form @submit.stop.prevent="onSubmit" @reset="onReset" v-if="show">
             <b-form-group
               id="input-group-1"
               label="Email address:"
@@ -50,7 +50,7 @@
                 :state="validateState('phone')"
               ></b-form-input>
               <b-form-invalid-feedback>
-                Phone number is invalid
+                Please use a valid phone number format
               </b-form-invalid-feedback>
             </b-form-group>
 
@@ -119,7 +119,7 @@
         phone: {
           required,
           phoneValid:(phone) => { //a custom validator!
-      	    return !phone || /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(phone)
+      	    return !phone || /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone)
           }
         },
         amount: {
@@ -130,8 +130,12 @@
     },
     methods: {
       onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
+        this.$v.form.$touch();
+        if (this.$v.form.$anyError) {
+          return;
+        } else {
+          alert('form looks fine to submit')
+        }
       },
       validateState(name) {
         const { $dirty, $error } = this.$v.form[name];
