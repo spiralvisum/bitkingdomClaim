@@ -14,7 +14,8 @@
             >
               <b-form-input
                 id="input-1"
-                v-model.lazy="$v.form.email.$model"
+                v-model="$v.form.email.$model"
+                lazy
                 type="email"
                 required
                 placeholder="Enter email"
@@ -25,7 +26,8 @@
             <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
               <b-form-input
                 id="input-2"
-                v-model.lazy="$v.form.name.$model"
+                v-model="$v.form.name.$model"
+                lazy
                 name="name"
                 required
                 placeholder="Enter name"
@@ -36,8 +38,9 @@
             <b-form-group id="input-group-3" label="Phone:" label-for="input-3">
               <b-form-input
                 id="input-3"
-                v-model.lazy="$v.form.phone.$model"
+                v-model="$v.form.phone.$model"
                 required
+                lazy
                 placeholder="Enter Phone Number"
               ></b-form-input>
             </b-form-group>
@@ -46,12 +49,12 @@
             <b-form-group id="input-group-4" label="Claim Amount:" label-for="input-4">
               <b-form-input
                 id="input-4"
-                v-model="form.amount"
+                v-model="$v.form.amount.$model"
                 required
                 placeholder="Enter Amount"
               ></b-form-input>
             </b-form-group>
-
+            <div class="error" v-if="!$v.form.amount.integer">Enter an integer only</div>
             <!-- Styled -->
             <b-form-group id="input-group-5" label="Upload" label-for="input-5">
             <b-form-file
@@ -75,7 +78,7 @@
 
 <script>
   import { validationMixin } from 'vuelidate'
-  import { required, minLength, email } from "vuelidate/lib/validators"
+  import { required, minLength, email, integer } from "vuelidate/lib/validators"
 
   export default {
     mixins: [validationMixin],
@@ -108,7 +111,8 @@
           }
         },
         amount: {
-          required
+          required,
+          integer
         }
       }
     },
