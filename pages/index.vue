@@ -19,10 +19,12 @@
                 type="email"
                 required
                 placeholder="Enter email"
+                :state="validateState('email')"
               ></b-form-input>
+              <b-form-invalid-feedback>
+                Email address is invalid
+              </b-form-invalid-feedback>
             </b-form-group>
-            <div class="error" v-if="!$v.form.email.email">That's not a valid email</div>
-
             <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
               <b-form-input
                 id="input-2"
@@ -31,9 +33,12 @@
                 name="name"
                 required
                 placeholder="Enter name"
+                :state="validateState('name')"
               ></b-form-input>
+              <b-form-invalid-feedback>
+                Your nbame must be at least 3 characters
+              </b-form-invalid-feedback>
             </b-form-group>
-            <div class="error" v-if="!$v.form.name.minLength">Your name must be at least 2 characters</div>
 
             <b-form-group id="input-group-3" label="Phone:" label-for="input-3">
               <b-form-input
@@ -42,9 +47,12 @@
                 required
                 lazy
                 placeholder="Enter Phone Number"
+                :state="validateState('phone')"
               ></b-form-input>
+              <b-form-invalid-feedback>
+                Phone number is invalid
+              </b-form-invalid-feedback>
             </b-form-group>
-            <div class="error" v-if="!$v.form.phone.phoneValid">Enter a valid phone number</div>
 
             <b-form-group id="input-group-4" label="Claim Amount:" label-for="input-4">
               <b-form-input
@@ -52,9 +60,13 @@
                 v-model="$v.form.amount.$model"
                 required
                 placeholder="Enter Amount"
+                :state="validateState('amount')"
               ></b-form-input>
+              <b-form-invalid-feedback>
+                Invalid amount
+              </b-form-invalid-feedback>
             </b-form-group>
-            <div class="error" v-if="!$v.form.amount.integer">Enter an integer only</div>
+      
             <!-- Styled -->
             <b-form-group id="input-group-5" label="Upload" label-for="input-5">
             <b-form-file
@@ -120,6 +132,10 @@
       onSubmit(evt) {
         evt.preventDefault()
         alert(JSON.stringify(this.form))
+      },
+      validateState(name) {
+        const { $dirty, $error } = this.$v.form[name];
+        return $dirty ? !$error : null;
       },
       onReset(evt) {
         evt.preventDefault()
