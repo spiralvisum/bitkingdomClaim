@@ -6,7 +6,7 @@
     <b-container>
       <b-row align-h="center">
         <b-col md="6" class="mt-5">
-          <b-form @submit.stop.prevent="onSubmit" @reset="onReset" v-if="show">
+          <b-form @submit.prevent="onSubmit" @reset="onReset" v-if="show" ref="form">
             <b-form-group
               id="input-group-1"
               label="Email address:"
@@ -17,12 +17,11 @@
                 v-model="$v.form.email.$model"
                 lazy
                 type="email"
-                required
                 placeholder="Enter email"
                 :state="validateState('email')"
               ></b-form-input>
               <b-form-invalid-feedback>
-                Email address is invalid
+                A valid email address is required
               </b-form-invalid-feedback>
             </b-form-group>
             <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
@@ -31,12 +30,11 @@
                 v-model="$v.form.name.$model"
                 lazy
                 name="name"
-                required
                 placeholder="Enter name"
                 :state="validateState('name')"
               ></b-form-input>
               <b-form-invalid-feedback>
-                Your nbame must be at least 3 characters
+                Your name is required and must be at least 3 characters
               </b-form-invalid-feedback>
             </b-form-group>
 
@@ -44,13 +42,11 @@
               <b-form-input
                 id="input-3"
                 v-model="$v.form.phone.$model"
-                required
-                lazy
                 placeholder="Enter Phone Number"
                 :state="validateState('phone')"
               ></b-form-input>
               <b-form-invalid-feedback>
-                Please use a valid phone number format
+                A valid phone number is required
               </b-form-invalid-feedback>
             </b-form-group>
 
@@ -58,26 +54,31 @@
               <b-form-input
                 id="input-4"
                 v-model="$v.form.amount.$model"
-                required
                 placeholder="Enter Amount"
                 :state="validateState('amount')"
               ></b-form-input>
               <b-form-invalid-feedback>
-                Invalid amount
+                A valid amount is required
               </b-form-invalid-feedback>
             </b-form-group>
       
             <!-- Styled -->
             <b-form-group id="input-group-5" label="Upload" label-for="input-5">
             <b-form-file
-              v-model="file"
-              :state="Boolean(file)"
+              v-model="form.file"
+              :state="Boolean(form.file)"
               accept="image/jpeg, image/png, image/gif"
               placeholder="Choose a file or drop it here..."
               drop-placeholder="Drop file here..."
             ></b-form-file>
             </b-form-group>
-
+            <VueHcaptcha
+              ref="invisibleHcaptcha"
+              sitekey="d6328d81-36bf-40ef-84df-492d2bdc2df1"
+              size="invisible"
+              @verify="onCallback"
+              @expired="onExpire"
+            />
             <b-button type="submit" variant="primary">Submit</b-button>
             <b-button type="reset" variant="danger">Reset</b-button>
           </b-form>
@@ -91,6 +92,7 @@
 <script>
   import { validationMixin } from 'vuelidate'
   import { required, minLength, email, integer } from "vuelidate/lib/validators"
+  import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
 
   export default {
     mixins: [validationMixin],
@@ -103,8 +105,12 @@
           name: '',
           file: null
         },
-        show: true
+        show: true,
+        verified: false
       }
+    },
+    components: {
+      VueHcaptcha
     },
     validations: {
       form:{
@@ -129,17 +135,30 @@
       }
     },
     methods: {
+      onCallback(response) {
+        this.verified = true;
+        console.log(`Callback Response: ${response}`)
+        alert('now we will send the info to firebase')
+      },
+      onExpire() {
+          this.verified = false;
+          console.log("Expired");
+      },
       onSubmit(evt) {
         this.$v.form.$touch();
         if (this.$v.form.$anyError) {
           return;
         } else {
-          alert('form looks fine to submit')
+          this.$refs.invisibleHcaptcha.execute()
+          // alert('form looks fine to submit')
         }
       },
+      onError(err) {
+          console.log(`Error: ${err}`)
+      },
       validateState(name) {
-        const { $dirty, $error } = this.$v.form[name];
-        return $dirty ? !$error : null;
+        const { $dirty, $error } = this.$v.form[name]
+        return $dirty ? !$error : null
       },
       onReset(evt) {
         evt.preventDefault()

@@ -51,22 +51,25 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
-    /*
+
     [
       '@nuxtjs/firebase',
       {
         config: {
-          apiKey: '<apikey>',
-          databaseURL: '<databaseURL>',
-          projectId: '<projectID>',
-          // storageBucket: '<storageBucket>',
+          apiKey: "AIzaSyAmw_1oTJWLFokCphphTM1NBa_iweARCqk",
+          authDomain: "bitkingdomclaim.firebaseapp.com",
+          databaseURL: "https://bitkingdomclaim.firebaseio.com",
+          projectId: "bitkingdomclaim",
+          storageBucket: "bitkingdomclaim.appspot.com",
+          messagingSenderId: "843211353535",
+          appId: "1:843211353535:web:6fbe6d1e1d5ab5ca93c50a"
         },
         services: {
           realtimeDb: true // Just as example. Can be any other service.
         }
       }
     ]
-    */
+
   ],
   /*
   ** Build configuration
